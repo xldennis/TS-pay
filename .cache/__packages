@@ -1,0 +1,14 @@
+base
+bitops
+RCurl
+leaps
+locfit
+nlme
+mgcv
+tseries
+TSA
+ggplot2
+astsa
+zoo
+timeDate
+forecast

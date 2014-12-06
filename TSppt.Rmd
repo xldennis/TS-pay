@@ -1,0 +1,262 @@
+---
+title       : TS Final Project
+subtitle    : TN Health and Education Average Hourly Wage
+author      : Xiang Liu (Dennis)
+framework   : impressjs        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+github:
+  user: XLdennis
+  repo: TSProject
+--- 
+
+
+### <b>title</b> : TS Final Project
+### <b>subtitle</b>  : TN Health and Education Average Hourly Wage
+### <b>author</b> : Xiang Liu (Dennis)
+
+
+--- .slide x:-2000 y:-1500
+# Data Information
+</br>
+### __Data source__: [TN Federal Reserve Bank](http://research.stlouisfed.org/fred2/data/SMU47000006500000003.txt) 
+</br>
+### __Variable__: Average Hourly Earnings of All Employees: Education and Health Services in Tennessee 
+</br>
+### __Monthly Data__: 2007.1 - 2014.9 (93 monthly observations and roughly 7 year statistics)
+
+--- .slide x:-1000 y:-1500
+
+# Time Series Plot
+```{r,echo=F,warning=F,message=F, fig.width=10}
+library(RCurl)
+URL="http://research.stlouisfed.org/fred2/data/SMU47000006500000003.txt"
+pay=getURL(URL)
+pay.ts=read.table(textConnection(pay),skip=12)[,2]
+pay.ts=ts(pay.ts, start=c(2007,1), frequency=12)
+ts.plot(pay.ts,main="Average Hourly Earnings of All Employees: Education and Health Services in Tennessee", xlim=c(2007,2014), ylab='Hourly Earnings ($)', type='o')
+```
+
+<font size="3"> 
+<p style="line-height:50%">
+1. Time series seems to keep constant from 2007 until about the third quarter of 2010 where it makes a sharp spike. Then it keeps decreasing to be constant. </br>
+2. Clearly, the mean does not remain constant which indicates that this series is nonstationary. </br>
+3. Why there is a sudden jump in between 2010 and 2011. Is there any policy about education and health service made by then? Will this pattern appear again in the future?
+
+--- .slide x:0 y:-1500
+
+# Check Stationary Process
+```{r check stationary, echo=F, comment=NA, message=FALSE , warning=FALSE, fig.height=5,fig.width=5.3}
+library(TSA)
+acf(pay.ts,lag=90,main="ACF E&H Hourly Salary", xlim=c(0,8),xlab='Seasonal Lag')
+pacf(pay.ts,lag=90,main="PACF E&H Hourly Salary", xlim=c(0,8),xlab='Seasonal Lag')
+```
+
+<font size="3"> 
+<p style="line-height:50%">
+
+- 1: Both ACF and PACF plots show signs that the E&H Salary data is nonstationary. 
+- 2: This is suggested by a gradually trails off in the ACF and a very large at lag 1 in the PACF. 
+- 3: Agmented Dickey-Fuller test also supports my thought. It's not stationary as the p-value = 0.6827, higher than 0.05, i.e., "Non-stationary" hypothesis cannot be rejected.
+
+--- .slide x:1000 y:-1500
+
+# Decomposition Process
+```{r decomposition, echo=F, comment=NA, message=FALSE , warning=FALSE,fig.width=10,fig.height=7}
+plot(decompose(pay.ts))
+```
+<font size="4"> 
+<p style="line-height:50%">
+
+- 1: There is an inverse-U shape trend
+- 2: We see strong seasonality
+
+--- .slide x:2000 y:-1500
+
+# Nonlinear Transformation
+```{r boxcox transformation, echo=F, comment=NA, message=FALSE , warning=FALSE,fig.height=5,fig.width=5.3}
+library(TSA)
+BoxCox.ar(pay.ts)
+```
+<font size="4"> 
+<p style="line-height:50%">
+
+- Since the 95% confidence interval include between -2 and 2, it suggests that the data isn't necessary to be transformed.
+
+--- #ing x:850 y:3000 rot:145 scale:5
+
+- It seems that  <b class="positioning">variance stablization</b> process isn't necessary 
+- Will  <b class="positioning">differencing process</b> work? Let's find out^*
+
+--- .slide x:6700 y:-300 z:0
+# 1st Order Differencing
+```{r 1st difference, echo=F, comment=NA, message=FALSE , warning=FALSE, fig.width=9, fig.height=6}
+plot(diff(pay.ts),main="1st order differencing", ylab='Average Hourly Earnings', type='o') 
+```
+<font size="4"> 
+<p style="line-height:50%">
+- After 1st order differencing, the time series plot seem to be stationary (p-value = 0.01)
+- The mean mean keeps to be constant over time and there is a little volatility in between 2010 and 2011 <b class="imagination">(my question)</b>
+
+--- .slide x:6700 y:-290  z:-1500
+# Seasonal Order Differencing
+```{r seasonal difference, echo=F, comment=NA, message=FALSE , warning=FALSE, fig.width=9, fig.height=6}
+plot(diff(pay.ts,lag=12),main="seasonal order differencing", ylab='Average Hourly Earnings', type='o',fig.width=9,fig.height=6) 
+```
+<font size="4"> 
+<p style="line-height:50%">
+- After 1st order differencing, the time series plot seem to be stationary. 
+- After seasonal order differencing, the time series plot still looks non-stationary. 
+- It seems to be unnecessary to take seasonal order differencing as also supported by the Augmented Dickey-Fuller test (p-value = 0.6027). 
+
+--- .slide x:6700 y:-280 z:-3000
+# Time Series Plot of Seasonality
+```{r seasonality, echo=F, comment=NA, message=FALSE , warning=FALSE, fig.width=10, fig.height= 3.5}
+library(TSA)
+plot(pay.ts,main="Time Series Plot with Monthly Label", ylab='Average Hourly Earnings')
+points(y=pay.ts,x=time(pay.ts),pch=as.vector(season(pay.ts)))
+library(ggplot2)
+month_range = factor(month.name,levels=month.name)
+measure = pay.ts[1:84]
+mydata = data.frame(month_range, measure)
+ggplot(mydata, aes(x=factor(month_range), y=measure)) + 
+  geom_boxplot(aes(fill=measure)) + xlab("Month") + ylab("Average Hourly Earnings") + 
+  scale_fill_discrete(name = "Measure")
+```
+
+<font size="3.5"> 
+- it seems that January and Febrary are always higher than September and October. The monthly box-plot also supports this observation, which indicates seasonality and encourages me to try seasonal arima model to fit the data. 
+
+--- .slide x:6700 y:-270 z:-4500
+# Spectral Analysis
+```{r spectral analysis, echo=F, comment=NA, message=FALSE , warning=FALSE, fig.width=10, fig.height=6,cache=TRUE}
+perioplot<-function(x){
+adjx=x-mean(x); 
+tf=fft(adjx); 
+nf=length(tf); n2=nf/2+1; 
+pritf<-tf[c(1:n2)]; 
+intensity<-(abs(pritf^2))/nf; 
+nyquist=1/2; pfreq<-seq(0,nf/2,by=1); 
+freq<-pfreq/(length(pfreq)-1)*nyquist; 
+intmax<-max(intensity)
+posmax<-max.col(t(intensity))
+freqmax<-(freq[posmax])
+maxper<-1/freqmax
+plot(freq,intensity,type="l")
+text(0.2,intmax, label= maxper)}
+t=time(pay.ts)
+fit = lm(pay.ts ~ t + I(t^2) + I(t^3))
+pay.detrend=fit$resid
+perioplot(pay.detrend)
+```
+<font size="4"> 
+<p style="line-height:50%">
+- After I detrend the data. A long cycle of 46 months still exists. 
+- There is a shorter spike at 12 month period and another in between them. 
+
+--- #big x:3500 y:2100 z: 3000 rot:180 scale:5
+<b>Next Step</b> <span class="thoughts">Let's fit an Arima model</span>
+
+--- .slide x:2825 y:2325 scale:2
+# ACF and PACF
+```{r model selection 1, echo=F, comment=NA, message=FALSE , warning=FALSE, cache=T, fig.width=9, fig.height=4}
+pay.df=diff(pay.ts)
+acf(pay.df,lag=90,main="ACF of Differenced TS", xlim=c(0,8), xlab='Seasonal Lag', ci.type = "ma")
+pacf(pay.df,lag=90,main="PACF of Differenced TS", xlim=c(0,8),xlab='Seasonal Lag')
+```
+
+--- .slide x:2825 y:2325 z:-3000 
+# Model Specification
+```{r specification, echo=F, comment=NA, message=FALSE , warning=FALSE, cache=TRUE}
+graphics.off()
+rm(ls=x)
+rm(ls=y)
+rm(ls=z)
+library(astsa)
+x=numeric(18)
+z=numeric(18)
+y=matrix(,18,5)
+n=1
+for (a in 0:1) {
+  for (b in 0:2 ) {
+    for (c in 0:2) {
+      x[n]=sarima(pay.ts, a, 1, 0, b, 0, c, 12, detail=F, no.constant = T)$AIC
+      z[n]=sarima(pay.ts, a, 1, 0, b, 0, c, 12, detail=F, no.constant = T)$BIC
+      y[n,]=c(a,b,c,x[n],z[n])
+      n=n+1
+      }
+    }
+  }
+rownames(y)=c(1:18)
+colnames(y)=c('AR(p)', 'SAR(P)', 'SMA(Q)', 'AIC','BIC')
+print(y[1:11,])
+```
+<font size="4"> 
+- According to AIC and BIC, the best model is SARMA(1,1) model with 1st order differencing. Let's do time series diagnose.
+
+--- .slide x:2825 y:3325 z:-3000
+# Model Diagnose
+```{r model diagnose, echo=F, comment=NA, message=FALSE , warning=FALSE, fig.height=9,fig.width=10,cache=T, results='hide'}
+library(astsa)
+pay.m1=sarima(pay.ts, 0,1,0,1,0,1,12, details = F,no.constant = T)
+```
+
+--- #one-more-thing x:2825 y:3325 z:-3010 roty:5
+# Statistics
+```{r statistics, echo=F, comment=NA, message=FALSE , warning=FALSE, fig.height=9,fig.width=10,cache=T, fig.show='hide'}
+pay.m1$fit$coef
+```
+<font size="4"> 
+<p style="line-height:50%">
+- both seasonal factors are significant to be included in the model
+
+--- .slide x:2345 y:2825 z:-2500 rot:30 
+# AR(1) & SAR(1) 
+```{r autoarima, echo=F, comment=NA, message=FALSE , warning=FALSE, fig.height=9,fig.width=10,cache=T, results='hide'}
+pay.m2=sarima(pay.ts, 1,1,0,1,0,0,12, details = F,no.constant = T)
+```
+
+--- #one-more-thing2 x:2345 y:2825 z:-2510 rot:30  roty:5
+# Statistics
+```{r autostatistics, echo=F, comment=NA, message=FALSE , warning=FALSE, fig.height=9,fig.width=10,cache=T, fig.show='hide'}
+pay.m2$fit$coef
+```
+<font size="4"> 
+<p style="line-height:50%">
+- both seasonal factors are significant to be included in the model
+
+--- .slide x:1945 y:2225 z:-2400 rot:90
+# Graphs
+```{r com, echo=F, comment=NA, message=FALSE , warning=FALSE, cache=T,fig.width=10,fig.height=4}
+pay.df=diff(pay.ts)
+pay.fit2=pay.ts-resid(pay.m2$fit)
+pay.fit=pay.ts-resid(pay.m1$fit)
+require(graphics)
+ts.plot(pay.ts, pay.fit, gpars=list(xlab="year", xlim= c(2007, 2014), ylab="Average Hourly Earnings"), col=c("black","red"), main= "Model Fit of Selected Model")
+ts.plot(pay.ts,pay.fit2, gpars=list(xlab="year", xlim= c(2007, 2014), ylab="Average Hourly Earnings"), col=c("black","red"), main= "Model Fit of Optimized Model")
+```
+
+--- .slide x:2225 y:1600 z:-2300 rot:140
+# Model Forecast
+```{r forecast,  echo=F, comment=NA, message=FALSE , warning=FALSE, cache=T, fig.width=10, fig.height=6}
+library(forecast)
+h=12
+n = length(pay.ts) - h
+pay1 = ts(pay.ts[1:n],start=c(2007,1), frequency=12)
+pay2 = ts(pay.ts[(n+1):length(pay.ts)], end =c(2014,9), frequency=12)
+PredictedValues=pay1
+pay1.pr = sarima.for(PredictedValues, n.ahead = h, 0,1,0,1,0,1,12,no.constant = T) 
+lines(pay2);lines(pay2);lines(pay2);lines(pay2)
+abline(v=n+.5)
+```
+<font size="3"> 
+<p style="line-height:50%">
+- Using a built-up model to predict 12 month data approaching the future, the graph is good at forecasting the future values of the E&H hourly salary. All predicted values are within <span class="you">95% confidence interval. </span>
+- However, the error tends to go higher as it progresses to the future. And the model consistently underestimate the realistic value.
+
+--- #its-in-3d x:2225 y:1600 z:-2300 rot:140 rotx:20 roty:20
+# Thank <span class="you">You</span> for <span class="noticed"> Listening</span>
+

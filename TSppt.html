@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=1024" />
+   <meta name="apple-mobile-web-app-capable" content="yes" />
+   <title>TS Final Project</title>
+   <meta name="description" content="impress.js is a presentation tool based on the power of CSS3 transforms and transitions in modern browsers and inspired by the idea behind prezi.com." />
+   <meta name="author" content="Xiang Liu (Dennis)" />
+   <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+   <link href="libraries/frameworks/impressjs/css/impress-demo.css" rel="stylesheet" />
+   <link rel="shortcut icon" href="libraries/frameworks/impressjs/favicon.png" />
+   <link rel="apple-touch-icon" href="libraries/frameworks/impressjs/apple-touch-icon.png" />
+   <link href="libraries/highlighters/highlight.js/css/tomorrow.css" rel="stylesheet" />   
+</head>
+<body class="impress-not-supported">
+  <div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are   
+      presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> 
+      browser.</p>
+  </div>
+  <div id="impress">
+    
+    <div id="slide-1" class="step " 
+  data-x="" data-y=""  
+   
+    
+    
+   >
+ <h3><b>title</b> : TS Final Project</h3>
+ <h3><b>subtitle</b>  : TN Health and Education Average Hourly Wage</h3>
+
+<h3><b>author</b> : Xiang Liu (Dennis)</h3>
+
+</div>
+<div id="slide-2" class="step slide" 
+  data-x="-2000" data-y="-1500"  
+   
+    
+    
+   >
+ <h1>Data Information</h1>
+ <p></br></p>
+
+<h3><strong>Data source</strong>: <a href="http://research.stlouisfed.org/fred2/data/SMU47000006500000003.txt">TN Federal Reserve Bank</a></h3>
+
+<p></br></p>
+
+<h3><strong>Variable</strong>: Average Hourly Earnings of All Employees: Education and Health Services in Tennessee</h3>
+
+<p></br></p>
+
+<h3><strong>Monthly Data</strong>: 2007.1 - 2014.9 (93 monthly observations and roughly 7 year statistics)</h3>
+
+</div>
+<div id="slide-3" class="step slide" 
+  data-x="-1000" data-y="-1500"  
+   
+    
+    
+   >
+ <h1>Time Series Plot</h1>
+ <p><img src="assets/fig/unnamed-chunk-1-1.png" alt="plot of chunk unnamed-chunk-1"> </p>
+
+<p><font size="3"> 
+<p style="line-height:50%">
+1. Time series seems to keep constant from 2007 until about the third quarter of 2010 where it makes a sharp spike. Then it keeps decreasing to be constant. </br>
+2. Clearly, the mean does not remain constant which indicates that this series is nonstationary. </br>
+3. Why there is a sudden jump in between 2010 and 2011. Is there any policy about education and health service made by then? Will this pattern appear again in the future?</p>
+
+</div>
+<div id="slide-4" class="step slide" 
+  data-x="0" data-y="-1500"  
+   
+    
+    
+   >
+ <h1>Check Stationary Process</h1>
+ <p><img src="assets/fig/check%20stationary-1.png" alt="plot of chunk check stationary"> <img src="assets/fig/check%20stationary-2.png" alt="plot of chunk check stationary"> </p>
+
+<p><font size="3"> 
+<p style="line-height:50%"></p>
+
+<ul>
+<li>1: Both ACF and PACF plots show signs that the E&amp;H Salary data is nonstationary. </li>
+<li>2: This is suggested by a gradually trails off in the ACF and a very large at lag 1 in the PACF. </li>
+<li>3: Agmented Dickey-Fuller test also supports my thought. It&#39;s not stationary as the p-value = 0.6827, higher than 0.05, i.e., &quot;Non-stationary&quot; hypothesis cannot be rejected.</li>
+</ul>
+
+</div>
+<div id="slide-5" class="step slide" 
+  data-x="1000" data-y="-1500"  
+   
+    
+    
+   >
+ <h1>Decomposition Process</h1>
+ <p><img src="assets/fig/decomposition-1.png" alt="plot of chunk decomposition"> 
+<font size="4"> 
+<p style="line-height:50%"></p>
+
+<ul>
+<li>1: There is an inverse-U shape trend</li>
+<li>2: We see strong seasonality</li>
+</ul>
+
+</div>
+<div id="slide-6" class="step slide" 
+  data-x="2000" data-y="-1500"  
+   
+    
+    
+   >
+ <h1>Nonlinear Transformation</h1>
+ <p><img src="assets/fig/boxcox%20transformation-1.png" alt="plot of chunk boxcox transformation"> 
+<font size="4"> 
+<p style="line-height:50%"></p>
+
+<ul>
+<li>Since the 95% confidence interval include between -2 and 2, it suggests that the data isn&#39;t necessary to be transformed.</li>
+</ul>
+
+</div>
+<div id="ing" class="step " 
+  data-x="850" data-y="3000"  
+    data-rotate="145" 
+    
+    
+    data-scale="5">
+ 
+ <ul>
+<li>It seems that  <b class="positioning">variance stablization</b> process isn&#39;t necessary </li>
+<li>Will  <b class="positioning">differencing process</b> work? Let&#39;s find out<sup>*</sup></li>
+</ul>
+
+</div>
+<div id="slide-8" class="step slide" 
+  data-x="6700" data-y="-300" data-z="0" 
+   
+    
+    
+   >
+ <h1>1st Order Differencing</h1>
+ <p><img src="assets/fig/1st%20difference-1.png" alt="plot of chunk 1st difference"> 
+<font size="4"> 
+<p style="line-height:50%"></p>
+
+<ul>
+<li>After 1st order differencing, the time series plot seem to be stationary (p-value = 0.01)</li>
+<li>The mean mean keeps to be constant over time and there is a little volatility in between 2010 and 2011 <b class="imagination">(my question)</b></li>
+</ul>
+
+</div>
+<div id="slide-9" class="step slide" 
+  data-x="6700" data-y="-290" data-z="-1500" 
+   
+    
+    
+   >
+ <h1>Seasonal Order Differencing</h1>
+ <p><img src="assets/fig/seasonal%20difference-1.png" alt="plot of chunk seasonal difference"> 
+<font size="4"> 
+<p style="line-height:50%"></p>
+
+<ul>
+<li>After 1st order differencing, the time series plot seem to be stationary. </li>
+<li>After seasonal order differencing, the time series plot still looks non-stationary. </li>
+<li>It seems to be unnecessary to take seasonal order differencing as also supported by the Augmented Dickey-Fuller test (p-value = 0.6027). </li>
+</ul>
+
+</div>
+<div id="slide-10" class="step slide" 
+  data-x="6700" data-y="-280" data-z="-3000" 
+   
+    
+    
+   >
+ <h1>Time Series Plot of Seasonality</h1>
+ <p><img src="assets/fig/seasonality-1.png" alt="plot of chunk seasonality"> <img src="assets/fig/seasonality-2.png" alt="plot of chunk seasonality"> </p>
+
+<p><font size="3.5"> </p>
+
+<ul>
+<li>it seems that January and Febrary are always higher than September and October. The monthly box-plot also supports this observation, which indicates seasonality and encourages me to try seasonal arima model to fit the data. </li>
+</ul>
+
+</div>
+<div id="slide-11" class="step slide" 
+  data-x="6700" data-y="-270" data-z="-4500" 
+   
+    
+    
+   >
+ <h1>Spectral Analysis</h1>
+ <p><img src="assets/fig/spectral%20analysis-1.png" alt="plot of chunk spectral analysis"> 
+<font size="4"> 
+<p style="line-height:50%"></p>
+
+<ul>
+<li>After I detrend the data. A long cycle of 46 months still exists. </li>
+<li>There is a shorter spike at 12 month period and another in between them. </li>
+</ul>
+
+</div>
+<div id="big" class="step " 
+  data-x="3500" data-y="2100"  
+    data-rotate="180" 
+    
+    
+    data-scale="5">
+ 
+ <p><b>Next Step</b> <span class="thoughts">Let&#39;s fit an Arima model</span></p>
+
+</div>
+<div id="slide-13" class="step slide" 
+  data-x="2825" data-y="2325"  
+   
+    
+    
+    data-scale="2">
+ <h1>ACF and PACF</h1>
+ <p><img src="assets/fig/model%20selection%201-1.png" alt="plot of chunk model selection 1"> <img src="assets/fig/model%20selection%201-2.png" alt="plot of chunk model selection 1"> </p>
+
+</div>
+<div id="slide-14" class="step slide" 
+  data-x="2825" data-y="2325" data-z="-3000" 
+   
+    
+    
+   >
+ <h1>Model Specification</h1>
+ <pre><code>   AR(p) SAR(P) SMA(Q)       AIC       BIC
+1      0      0      0 -1.826375 -2.826375
+2      0      0      1 -1.837187 -2.809954
+3      0      0      2 -1.828474 -2.774010
+4      0      1      0 -1.844929 -2.817697
+5      0      1      1 -2.003494 -2.949029
+6      0      1      2 -1.996721 -2.915024
+7      0      2      0 -1.837379 -2.782914
+8      0      2      1 -1.999276 -2.917579
+9      0      2      2 -2.001515 -2.892586
+10     1      0      0 -1.839829 -2.812597
+11     1      0      1 -1.851933 -2.797468
+</code></pre>
+
+<p><font size="4"> </p>
+
+<ul>
+<li>According to AIC and BIC, the best model is SARMA(1,1) model with 1st order differencing. Let&#39;s do time series diagnose.</li>
+</ul>
+
+</div>
+<div id="slide-15" class="step slide" 
+  data-x="2825" data-y="3325" data-z="-3000" 
+   
+    
+    
+   >
+ <h1>Model Diagnose</h1>
+ <p><img src="assets/fig/model%20diagnose-1.png" alt="plot of chunk model diagnose"> </p>
+
+</div>
+<div id="one-more-thing" class="step " 
+  data-x="2825" data-y="3325" data-z="-3010" 
+   
+    
+   data-rotate-y="5" 
+   >
+ <h1>Statistics</h1>
+ <pre><code>      sar1       sma1 
+ 0.9977296 -0.9645097 
+</code></pre>
+
+<p><font size="4"> 
+<p style="line-height:50%"></p>
+
+<ul>
+<li>both seasonal factors are significant to be included in the model</li>
+</ul>
+
+</div>
+<div id="slide-17" class="step slide" 
+  data-x="2345" data-y="2825" data-z="-2500" 
+    data-rotate="30" 
+    
+    
+   >
+ <h1>AR(1) &amp; SAR(1)</h1>
+ <p><img src="assets/fig/autoarima-1.png" alt="plot of chunk autoarima"> </p>
+
+</div>
+<div id="one-more-thing2" class="step " 
+  data-x="2345" data-y="2825" data-z="-2510" 
+    data-rotate="30" 
+    
+   data-rotate-y="5" 
+   >
+ <h1>Statistics</h1>
+ <pre><code>       ar1       sar1 
+-0.1825479  0.1913842 
+</code></pre>
+
+<p><font size="4"> 
+<p style="line-height:50%"></p>
+
+<ul>
+<li>both seasonal factors are significant to be included in the model</li>
+</ul>
+
+</div>
+<div id="slide-19" class="step slide" 
+  data-x="1945" data-y="2225" data-z="-2400" 
+    data-rotate="90" 
+    
+    
+   >
+ <h1>Graphs</h1>
+ <p><img src="assets/fig/com-1.png" alt="plot of chunk com"> <img src="assets/fig/com-2.png" alt="plot of chunk com"> </p>
+
+</div>
+<div id="slide-20" class="step slide" 
+  data-x="2225" data-y="1600" data-z="-2300" 
+    data-rotate="140" 
+    
+    
+   >
+ <h1>Model Forecast</h1>
+ <p><img src="assets/fig/forecast-1.png" alt="plot of chunk forecast"> 
+<font size="3"> 
+<p style="line-height:50%"></p>
+
+<ul>
+<li>Using a built-up model to predict 12 month data approaching the future, the graph is good at forecasting the future values of the E&amp;H hourly salary. All predicted values are within <span class="you">95% confidence interval. </span></li>
+<li>However, the error tends to go higher as it progresses to the future. And the model consistently underestimate the realistic value.</li>
+</ul>
+
+</div>
+<div id="its-in-3d" class="step " 
+  data-x="2225" data-y="1600" data-z="-2300" 
+    data-rotate="140" 
+   data-rotate-x="20" 
+   data-rotate-y="20" 
+   >
+ <h1>Thank <span class="you">You</span> for <span class="noticed"> Listening</span></h1>
+ 
+</div>
+ 
+    <div id="overview" class="step" data-x="3000" data-y="1500" data-scale="10">
+    </div>
+
+  </div>
+
+  <div class="hint">
+    <p>Use a spacebar or arrow keys to navigate</p>
+  </div>
+  
+  <div style="position: fixed; bottom: 10px; left: 10px; pointer-events: auto;">
+    <iframe src="http://ghbtns.com/github-btn.html?user=XLdennis&repo=TSProject&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="110px" height="20px"></iframe>
+  <iframe src="http://ghbtns.com/github-btn.html?user=XLdennis&repo=TSProject&&type=fork&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="110px" height="20px"></iframe>
+    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+  </div>
+  </body>
+ <script>
+  if ("ontouchstart" in document.documentElement) { 
+    document.querySelector(".hint").innerHTML = "<p>Tap on the left or right to navigate</p>";
+  }
+ </script>
+ <script src="libraries/frameworks/impressjs/js/impress.js"></script>
+ <script>impress().init();</script>
+ <!-- LOAD HIGHLIGHTER JS FILES -->
+ <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+ <script>hljs.initHighlightingOnLoad();</script>
+ <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+  
+ </html>
